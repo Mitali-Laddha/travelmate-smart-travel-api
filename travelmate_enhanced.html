@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate - Smart Travel Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a1525 0%, #1a2332 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #3b82f6;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #3b82f6;
+            border: 2px solid #3b82f6;
+        }
+
+        .btn-secondary:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #9ca3af;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            max-width: 600px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border-radius: 50px;
+            border: 1px solid #374151;
+            background: #1e293b;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .destination-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .destination-filter {
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            background: #1e293b;
+            color: #d1d5db;
+            border: 1px solid #374151;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .destination-filter.active, .destination-filter:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #3b82f6;
+            margin: 3rem 0 1.5rem;
+            text-align: center;
+        }
+
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .destination-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .destination-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .destination-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .destination-content {
+            padding: 1.5rem;
+        }
+
+        .destination-title {
+            font-size: 1.5rem;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .destination-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .rating {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+
+        .destination-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #374151;
+        }
+
+        .price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .btn-plan {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-plan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 2rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #374151;
+        }
+
+        .modal-header h2 {
+            color: #3b82f6;
+            font-size: 2rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        .itinerary-builder {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid #374151;
+        }
+
+        .day-tabs {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .day-tab {
+            padding: 0.8rem 2rem;
+            background: #334155;
+            border: none;
+            border-radius: 0.5rem;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .day-tab.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .day-content {
+            display: none;
+            min-height: 200px;
+            padding: 1.5rem;
+            background: #0f172a;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .day-content.active {
+            display: block;
+        }
+
+        .activity-item {
+            background: #1e293b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #3b82f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-remove {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .budget-section {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .budget-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .budget-input-group label {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .budget-input-group input {
+            padding: 0.8rem;
+            border-radius: 0.5rem;
+            border: 1px solid #374151;
+            background: #334155;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .budget-input-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .budget-summary {
+            background: #0f172a;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .budget-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #374151;
+            color: #d1d5db;
+        }
+
+        .budget-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3b82f6;
+            margin-top: 1rem;
+        }
+
+        .map-container {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid #374151;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 1.1rem;
+            border: 2px dashed #475569;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 0.5rem;
+            border: 1px solid #374151;
+            background: #334155;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .user-info {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #9ca3af;
+            font-size: 1.1rem;
+        }
+
+        .activity-suggestions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .suggestion-card {
+            background: #334155;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #475569;
+        }
+
+        .suggestion-card:hover {
+            background: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .destinations-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .budget-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">TravelMate</div>
+        <ul class="nav-links">
+            <li><a href="#" class="active" onclick="showPage('home')">Home</a></li>
+            <li><a href="#" onclick="showPage('destinations')">Destinations</a></li>
+            <li><a href="#" onclick="showPage('my-trips')">My Trips</a></li>
+            <li><a href="#" onclick="showPage('budget')">Budget Planner</a></li>
+        </ul>
+        <div class="auth-buttons">
+            <span class="user-info hidden" id="userInfo"></span>
+            <button class="btn btn-primary" id="loginBtn" onclick="openAuthModal('login')">Login</button>
+            <button class="btn btn-secondary" id="signupBtn" onclick="openAuthModal('signup')">Sign Up</button>
+            <button class="btn btn-secondary hidden" id="logoutBtn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Home Page -->
+        <div id="homePage">
+            <div class="hero">
+                <h1>Plan Your Perfect Journey</h1>
+                <p>Discover destinations, build itineraries, and manage your travel budget - all in one place</p>
+                
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search destinations, activities, or places..." onkeyup="filterDestinations()">
+                </div>
+
+                <div class="destination-filters">
+                    <button class="destination-filter active" onclick="filterByCategory('all')">All Destinations</button>
+                    <button class="destination-filter" onclick="filterByCategory('beach')">🏖️ Beach</button>
+                    <button class="destination-filter" onclick="filterByCategory('mountain')">⛰️ Mountain</button>
+                    <button class="destination-filter" onclick="filterByCategory('cultural')">🏛️ Cultural</button>
+                    <button class="destination-filter" onclick="filterByCategory('adventure')">🎯 Adventure</button>
+                </div>
+            </div>
+
+            <h2 class="section-title">🔥 Popular Destinations</h2>
+            <div class="destinations-grid" id="popularDestinations"></div>
+
+            <h2 class="section-title">All Destinations</h2>
+            <div class="destinations-grid" id="allDestinations"></div>
+        </div>
+
+        <!-- My Trips Page -->
+        <div id="myTripsPage" class="hidden">
+            <h2 class="section-title">My Travel Plans</h2>
+            <div id="tripsList"></div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 id="authTitle">Login</h2>
+                <button class="close-btn" onclick="closeModal('authModal')">×</button>
+            </div>
+            <form id="authForm" onsubmit="handleAuth(event)">
+                <div class="form-group hidden" id="nameGroup">
+                    <label for="nameInput">Full Name</label>
+                    <input type="text" id="nameInput" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="emailInput">Email</label>
+                    <input type="email" id="emailInput" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="passwordInput">Password</label>
+                    <input type="password" id="passwordInput" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit</button>
+            </form>
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="#" style="color: #3b82f6; text-decoration: none;" id="toggleAuth" onclick="toggleAuthMode()">Switch to Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Itinerary Builder Modal -->
+    <div class="modal" id="itineraryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="destinationTitle">Plan Your Trip</h2>
+                <button class="close-btn" onclick="closeModal('itineraryModal')">×</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <div class="form-group">
+                        <label for="tripName">Trip Name</label>
+                        <input type="text" id="tripName" placeholder="e.g., 5-day Goa Vacation">
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="numDays">Number of Days</label>
+                        <select id="numDays" onchange="updateDayTabs()">
+                            <option value="1">1 Day</option>
+                            <option value="2">2 Days</option>
+                            <option value="3" selected>3 Days</option>
+                            <option value="4">4 Days</option>
+                            <option value="5">5 Days</option>
+                            <option value="6">6 Days</option>
+                            <option value="7">7 Days</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="destinationDetails"></div>
+            </div>
+
+            <!-- Budget Section -->
+            <div class="budget-section">
+                <h3 style="color: #3b82f6; margin-bottom: 1rem;">💰 Budget Estimator</h3>
+                <div class="budget-grid">
+                    <div class="budget-input-group">
+                        <label for="flightBudget">✈️ Flights</label>
+                        <input type="number" id="flightBudget" placeholder="0" onchange="calculateBudget()">
+                    </div>
+                    <div class="budget-input-group">
+                        <label for="hotelBudget">🏨 Accommodation</label>
+                        <input type="number" id="hotelBudget" placeholder="0" onchange="calculateBudget()">
+                    </div>
+                    <div class="budget-input-group">
+                        <label for="foodBudget">🍽️ Food & Dining</label>
+                        <input type="number" id="foodBudget" placeholder="0" onchange="calculateBudget()">
+                    </div>
+                    <div class="budget-input-group">
+                        <label for="activityBudget">🎯 Activities</label>
+                        <input type="number" id="activityBudget" placeholder="0" onchange="calculateBudget()">
+                    </div>
+                    <div class="budget-input-group">
+                        <label for="transportBudget">🚗 Local Transport</label>
+                        <input type="number" id="transportBudget" placeholder="0" onchange="calculateBudget()">
+                    </div>
+                    <div class="budget-input-group">
+                        <label for="miscBudget">💵 Miscellaneous</label>
+                        <input type="number" id="miscBudget" placeholder="0" onchange="calculateBudget()">
+                    </div>
+                </div>
+
+                <div class="budget-summary">
+                    <div class="budget-row">
+                        <span>Flights:</span>
+                        <span id="flightCost">₹0</span>
+                    </div>
+                    <div class="budget-row">
+                        <span>Accommodation:</span>
+                        <span id="hotelCost">₹0</span>
+                    </div>
+                    <div class="budget-row">
+                        <span>Food & Dining:</span>
+                        <span id="foodCost">₹0</span>
+                    </div>
+                    <div class="budget-row">
+                        <span>Activities:</span>
+                        <span id="activityCost">₹0</span>
+                    </div>
+                    <div class="budget-row">
+                        <span>Local Transport:</span>
+                        <span id="transportCost">₹0</span>
+                    </div>
+                    <div class="budget-row">
+                        <span>Miscellaneous:</span>
+                        <span id="miscCost">₹0</span>
+                    </div>
+                    <div class="budget-total">
+                        <span>Total Budget:</span>
+                        <span id="totalBudget">₹0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Itinerary Builder -->
+            <div class="itinerary-builder">
+                <h3 style="color: #3b82f6; margin-bottom: 1rem;">📅 Day-wise Itinerary</h3>
+                <div class="day-tabs" id="dayTabs"></div>
+                <div id="dayContents"></div>
+
+                <div style="margin-top: 1.5rem;">
+                    <h4 style="color: #9ca3af; margin-bottom: 1rem;">Quick Add Activities:</h4>
+                    <div class="activity-suggestions" id="activitySuggestions"></div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <input type="text" id="customActivity" placeholder="Add custom activity..." style="flex: 1; padding: 0.8rem; border-radius: 0.5rem; border: 1px solid #374151; background: #334155; color: #fff;">
+                    <button class="btn btn-primary" onclick="addCustomActivity()">Add</button>
+                </div>
+            </div>
+
+            <!-- Map Section -->
+            <div class="map-container">
+                <h3 style="color: #3b82f6; margin-bottom: 1rem; width: 100%; text-align: center;">🗺️ Destination Map</h3>
+                <div class="map-placeholder">
+                    <div style="text-align: center;">
+                        <p style="font-size: 3rem; margin-bottom: 1rem;">📍</p>
+                        <p>Interactive map of <span id="mapDestName"></span></p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Map integration coming soon</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="saveTrip()" style="flex: 1;">💾 Save Trip</button>
+                <button class="btn btn-secondary" onclick="exportTrip()" style="flex: 1;">📤 Export JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        const API_URL = 'http://localhost:3000/api';
+        let currentUser = null;
+        let allDestinations = [];
+        let selectedDestination = null;
+        let currentCategory = 'all';
+        let currentDay = 1;
+        let tripData = {
+            name: '',
+            destination: '',
+            startDate: '',
+            days: 3,
+            budget: {
+                flights: 0,
+                hotel: 0,
+                food: 0,
+                activities: 0,
+                transport: 0,
+                misc: 0
+            },
+            itinerary: {}
+        };
+        let userTrips = [];
+
+        // Initialize
+        window.onload = function() {
+            loadDestinations();
+            checkAuth();
+            loadUserTrips();
+        };
+
+        // Sample Destinations Data
+        function getSampleDestinations() {
+            return [
+                {
+                    id: 3,
+                    name: 'Jaipur',
+                    category: 'cultural',
+                    rating: 4.6,
+                    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=500',
+                    description: 'The Pink City - Rich heritage, majestic forts, and royal palaces',
+                    duration: '2-3 days',
+                    bestTime: 'October to March',
+                    avgCost: 12000,
+                    activities: ['Amber Fort', 'City Palace', 'Hawa Mahal', 'Local Markets', 'Camel Ride'],
+                    popular: true
+                },
+                {
+                    id: 4,
+                    name: 'Ladakh',
+                    category: 'adventure',
+                    rating: 4.9,
+                    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500',
+                    description: 'Land of high passes - Adventure, monasteries, and stunning landscapes',
+                    duration: '7-10 days',
+                    bestTime: 'May to September',
+                    avgCost: 35000,
+                    activities: ['Leh Palace', 'Pangong Lake', 'Nubra Valley', 'Bike Trip', 'Monastery Tour'],
+                    popular: true
+                },
+                {
+                    id: 5,
+                    name: 'Kerala',
+                    category: 'beach',
+                    rating: 4.7,
+                    image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=500',
+                    description: "God's Own Country - Backwaters, beaches, and lush greenery",
+                    duration: '5-7 days',
+                    bestTime: 'September to March',
+                    avgCost: 20000,
+                    activities: ['Houseboat Stay', 'Backwater Cruise', 'Beach Relaxation', 'Ayurvedic Spa', 'Tea Gardens'],
+                    popular: false
+                },
+                {
+                    id: 6,
+                    name: 'Udaipur',
+                    category: 'cultural',
+                    rating: 4.8,
+                    image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=500',
+                    description: 'City of Lakes - Romantic palaces, beautiful lakes, and rich culture',
+                    duration: '2-3 days',
+                    bestTime: 'September to March',
+                    avgCost: 14000,
+                    activities: ['Lake Pichola', 'City Palace', 'Boat Ride', 'Jagdish Temple', 'Local Markets'],
+                    popular: false
+                },
+                {
+                    id: 7,
+                    name: 'Rishikesh',
+                    category: 'adventure',
+                    rating: 4.5,
+                    image: 'https://images.unsplash.com/photo-1626092107797-36f3a6c423c3?w=500',
+                    description: 'Yoga capital and adventure hub - Spiritual retreat with thrilling activities',
+                    duration: '3-4 days',
+                    bestTime: 'September to November',
+                    avgCost: 10000,
+                    activities: ['River Rafting', 'Bungee Jumping', 'Yoga Sessions', 'Ganga Aarti', 'Trekking'],
+                    popular: false
+                },
+                {
+                    id: 8,
+                    name: 'Shimla',
+                    category: 'mountain',
+                    rating: 4.4,
+                    image: 'https://images.unsplash.com/photo-1597074866923-dc0589150358?w=500',
+                    description: 'Queen of Hills - Colonial charm, scenic beauty, and pleasant weather',
+                    duration: '3-4 days',
+                    bestTime: 'March to June',
+                    avgCost: 13000,
+                    activities: ['Mall Road', 'Jakhu Temple', 'Toy Train', 'Ice Skating', 'Ridge Walk'],
+                    popular: false
+                }
+            ];
+        }
+
+        // Load Destinations
+        async function loadDestinations() {
+            try {
+                const response = await fetch(`${API_URL}/destinations`);
+                allDestinations = await response.json();
+            } catch (error) {
+                console.log('Using sample data');
+                allDestinations = getSampleDestinations();
+            }
+            displayDestinations();
+        }
+
+        function displayDestinations() {
+            const popular = allDestinations.filter(d => d.popular);
+            document.getElementById('popularDestinations').innerHTML = popular.map(createDestinationCard).join('');
+            filterDestinations();
+        }
+
+        function createDestinationCard(dest) {
+            return `
+                <div class="destination-card" onclick="openItineraryModal(${dest.id})">
+                    <div style="position: relative;">
+                        <img src="${dest.image}" alt="${dest.name}" class="destination-image">
+                        <span class="destination-badge" style="position: absolute;">${dest.category}</span>
+                    </div>
+                    <div class="destination-content">
+                        <h3 class="destination-title">${dest.name}</h3>
+                        <div class="destination-meta">
+                            <span class="rating">⭐ ${dest.rating}</span>
+                            <span>•</span>
+                            <span>⏱️ ${dest.duration}</span>
+                        </div>
+                        <div class="destination-meta">
+                            <span>🌤️ ${dest.bestTime}</span>
+                        </div>
+                        <p style="color: #9ca3af; margin: 0.8rem 0; font-size: 0.95rem;">${dest.description}</p>
+                        <div class="destination-footer">
+                            <span class="price">₹${dest.avgCost.toLocaleString()}</span>
+                            <button class="btn-plan" onclick="event.stopPropagation(); openItineraryModal(${dest.id})">Plan Trip</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function filterDestinations() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allDestinations.filter(dest => {
+                const matchesSearch = dest.name.toLowerCase().includes(searchTerm) || 
+                                    dest.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = currentCategory === 'all' || dest.category === currentCategory;
+                return matchesSearch && matchesCategory;
+            });
+
+            const html = filtered.map(createDestinationCard).join('');
+            document.getElementById('allDestinations').innerHTML = html || '<p class="no-data">No destinations found</p>';
+        }
+
+        function filterByCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.destination-filter').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            filterDestinations();
+        }
+
+        // Open Itinerary Modal
+        function openItineraryModal(destId) {
+            selectedDestination = allDestinations.find(d => d.id === destId);
+            if (!selectedDestination) return;
+
+            document.getElementById('destinationTitle').textContent = `Plan Your Trip to ${selectedDestination.name}`;
+            document.getElementById('mapDestName').textContent = selectedDestination.name;
+            
+            // Show destination details
+            document.getElementById('destinationDetails').innerHTML = `
+                <div style="background: #0f172a; padding: 1.5rem; border-radius: 0.5rem; border: 1px solid #374151;">
+                    <img src="${selectedDestination.image}" style="width: 100%; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <h3 style="color: #3b82f6; margin-bottom: 0.5rem;">${selectedDestination.name}</h3>
+                    <p style="color: #d1d5db; font-size: 0.9rem; margin-bottom: 0.8rem;">${selectedDestination.description}</p>
+                    <div style="color: #9ca3af; font-size: 0.85rem;">
+                        <p>⭐ Rating: ${selectedDestination.rating}/5</p>
+                        <p>⏱️ Duration: ${selectedDestination.duration}</p>
+                        <p>🌤️ Best Time: ${selectedDestination.bestTime}</p>
+                        <p style="color: #3b82f6; font-weight: bold; margin-top: 0.5rem;">Avg Cost: ₹${selectedDestination.avgCost.toLocaleString()}</p>
+                    </div>
+                </div>
+            `;
+
+            // Initialize trip data
+            tripData = {
+                name: '',
+                destination: selectedDestination.name,
+                destinationId: selectedDestination.id,
+                startDate: '',
+                days: 3,
+                budget: {
+                    flights: 0,
+                    hotel: 0,
+                    food: 0,
+                    activities: 0,
+                    transport: 0,
+                    misc: 0
+                },
+                itinerary: {
+                    day1: [],
+                    day2: [],
+                    day3: []
+                }
+            };
+
+            // Show activity suggestions
+            document.getElementById('activitySuggestions').innerHTML = selectedDestination.activities.map(activity => `
+                <div class="suggestion-card" onclick="addSuggestedActivity('${activity}')">
+                    <div style="font-weight: 600; color: #d1d5db;">${activity}</div>
+                    <div style="font-size: 0.8rem; color: #9ca3af; margin-top: 0.3rem;">Click to add</div>
+                </div>
+            `).join('');
+
+            updateDayTabs();
+            document.getElementById('itineraryModal').classList.add('active');
+        }
+
+        function updateDayTabs() {
+            const numDays = parseInt(document.getElementById('numDays').value);
+            tripData.days = numDays;
+            
+            // Create day tabs
+            let tabsHTML = '';
+            let contentsHTML = '';
+            
+            for (let i = 1; i <= numDays; i++) {
+                if (!tripData.itinerary[`day${i}`]) {
+                    tripData.itinerary[`day${i}`] = [];
+                }
+                
+                tabsHTML += `<button class="day-tab ${i === 1 ? 'active' : ''}" onclick="switchDay(${i})">Day ${i}</button>`;
+                contentsHTML += `
+                    <div class="day-content ${i === 1 ? 'active' : ''}" id="dayContent${i}">
+                        <div id="dayActivities${i}"></div>
+                        <p class="no-data" id="noActivities${i}" style="display: ${tripData.itinerary[`day${i}`].length === 0 ? 'block' : 'none'}">
+                            No activities added yet. Use quick add or custom activity below.
+                        </p>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('dayTabs').innerHTML = tabsHTML;
+            document.getElementById('dayContents').innerHTML = contentsHTML;
+            
+            currentDay = 1;
+            renderDayActivities();
+        }
+
+        function switchDay(day) {
+            currentDay = day;
+            document.querySelectorAll('.day-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.day-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`dayContent${day}`).classList.add('active');
+        }
+
+        function addSuggestedActivity(activity) {
+            tripData.itinerary[`day${currentDay}`].push({
+                id: Date.now(),
+                name: activity,
+                time: '',
+                notes: ''
+            });
+            renderDayActivities();
+        }
+
+        function addCustomActivity() {
+            const activity = document.getElementById('customActivity').value.trim();
+            if (!activity) return;
+            
+            tripData.itinerary[`day${currentDay}`].push({
+                id: Date.now(),
+                name: activity,
+                time: '',
+                notes: ''
+            });
+            
+            document.getElementById('customActivity').value = '';
+            renderDayActivities();
+        }
+
+        function renderDayActivities() {
+            for (let i = 1; i <= tripData.days; i++) {
+                const activities = tripData.itinerary[`day${i}`];
+                const container = document.getElementById(`dayActivities${i}`);
+                const noDataMsg = document.getElementById(`noActivities${i}`);
+                
+                if (activities.length === 0) {
+                    container.innerHTML = '';
+                    noDataMsg.style.display = 'block';
+                } else {
+                    noDataMsg.style.display = 'none';
+                    container.innerHTML = activities.map(activity => `
+                        <div class="activity-item">
+                            <div>
+                                <div style="font-weight: 600; color: #3b82f6;">${activity.name}</div>
+                                <div style="font-size: 0.85rem; color: #9ca3af; margin-top: 0.3rem;">
+                                    <input type="time" value="${activity.time}" onchange="updateActivityTime(${i}, ${activity.id}, this.value)" 
+                                        style="background: #0f172a; border: 1px solid #374151; color: #fff; padding: 0.3rem; border-radius: 0.3rem; margin-right: 0.5rem;">
+                                    <input type="text" value="${activity.notes}" placeholder="Add notes..." onchange="updateActivityNotes(${i}, ${activity.id}, this.value)"
+                                        style="background: #0f172a; border: 1px solid #374151; color: #fff; padding: 0.3rem; border-radius: 0.3rem; width: 200px;">
+                                </div>
+                            </div>
+                            <button class="activity-remove" onclick="removeActivity(${i}, ${activity.id})">Remove</button>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function updateActivityTime(day, activityId, time) {
+            const activity = tripData.itinerary[`day${day}`].find(a => a.id === activityId);
+            if (activity) activity.time = time;
+        }
+
+        function updateActivityNotes(day, activityId, notes) {
+            const activity = tripData.itinerary[`day${day}`].find(a => a.id === activityId);
+            if (activity) activity.notes = notes;
+        }
+
+        function removeActivity(day, activityId) {
+            tripData.itinerary[`day${day}`] = tripData.itinerary[`day${day}`].filter(a => a.id !== activityId);
+            renderDayActivities();
+        }
+
+        // Budget Calculator
+        function calculateBudget() {
+            const flights = parseFloat(document.getElementById('flightBudget').value) || 0;
+            const hotel = parseFloat(document.getElementById('hotelBudget').value) || 0;
+            const food = parseFloat(document.getElementById('foodBudget').value) || 0;
+            const activities = parseFloat(document.getElementById('activityBudget').value) || 0;
+            const transport = parseFloat(document.getElementById('transportBudget').value) || 0;
+            const misc = parseFloat(document.getElementById('miscBudget').value) || 0;
+
+            tripData.budget = { flights, hotel, food, activities, transport, misc };
+
+            document.getElementById('flightCost').textContent = `₹${flights.toLocaleString()}`;
+            document.getElementById('hotelCost').textContent = `₹${hotel.toLocaleString()}`;
+            document.getElementById('foodCost').textContent = `₹${food.toLocaleString()}`;
+            document.getElementById('activityCost').textContent = `₹${activities.toLocaleString()}`;
+            document.getElementById('transportCost').textContent = `₹${transport.toLocaleString()}`;
+            document.getElementById('miscCost').textContent = `₹${misc.toLocaleString()}`;
+
+            const total = flights + hotel + food + activities + transport + misc;
+            document.getElementById('totalBudget').textContent = `₹${total.toLocaleString()}`;
+        }
+
+        // Save Trip
+        async function saveTrip() {
+            tripData.name = document.getElementById('tripName').value.trim();
+            tripData.startDate = document.getElementById('startDate').value;
+
+            if (!tripData.name) {
+                alert('Please enter a trip name!');
+                return;
+            }
+
+            if (!tripData.startDate) {
+                alert('Please select a start date!');
+                return;
+            }
+
+            if (!currentUser) {
+                alert('Please login to save your trip!');
+                openAuthModal('login');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/trips`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: currentUser.id,
+                        ...tripData
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Trip saved successfully!');
+                    closeModal('itineraryModal');
+                    loadUserTrips();
+                } else {
+                    throw new Error('Save failed');
+                }
+            } catch (error) {
+                console.error('Error saving trip:', error);
+                // Save locally
+                userTrips.push({...tripData, id: Date.now(), userId: currentUser.id});
+                localStorage.setItem('userTrips', JSON.stringify(userTrips));
+                alert('Trip saved locally!');
+                closeModal('itineraryModal');
+                loadUserTrips();
+            }
+        }
+
+        function exportTrip() {
+            tripData.name = document.getElementById('tripName').value.trim() || 'My Trip';
+            const dataStr = JSON.stringify(tripData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${tripData.name.replace(/\s+/g, '_')}.json`;
+            link.click();
+        }
+
+        // Load User Trips
+        async function loadUserTrips() {
+            if (!currentUser) {
+                document.getElementById('tripsList').innerHTML = '<p class="no-data">Please login to view your trips</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/trips/user/${currentUser.id}`);
+                userTrips = await response.json();
+            } catch (error) {
+                console.log('Loading from local storage');
+                const saved = localStorage.getItem('userTrips');
+                userTrips = saved ? JSON.parse(saved).filter(t => t.userId === currentUser.id) : [];
+            }
+
+            displayUserTrips();
+        }
+
+        function displayUserTrips() {
+            if (userTrips.length === 0) {
+                document.getElementById('tripsList').innerHTML = `
+                    <div class="no-data">
+                        <p style="font-size: 3rem; margin-bottom: 1rem;">✈️</p>
+                        <p>No trips planned yet</p>
+                        <button class="btn btn-primary" onclick="showPage('home')" style="margin-top: 1rem;">Explore Destinations</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const html = userTrips.map(trip => {
+                const totalBudget = Object.values(trip.budget || {}).reduce((sum, val) => sum + val, 0);
+                const totalActivities = Object.values(trip.itinerary || {}).reduce((sum, day) => sum + day.length, 0);
+                
+                return `
+                    <div class="destination-card" style="margin-bottom: 2rem;">
+                        <div class="destination-content">
+                            <h3 class="destination-title">${trip.name}</h3>
+                            <div class="destination-meta">
+                                <span>📍 ${trip.destination}</span>
+                                <span>•</span>
+                                <span>📅 ${new Date(trip.startDate).toLocaleDateString()}</span>
+                                <span>•</span>
+                                <span>⏱️ ${trip.days} days</span>
+                            </div>
+                            <div class="destination-meta">
+                                <span>💰 Budget: ₹${totalBudget.toLocaleString()}</span>
+                                <span>•</span>
+                                <span>🎯 ${totalActivities} activities planned</span>
+                            </div>
+                            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                                <button class="btn btn-primary" onclick="viewTrip(${trip.id})">View Details</button>
+                                <button class="btn btn-secondary" onclick="deleteTrip(${trip.id})">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('tripsList').innerHTML = html;
+        }
+
+        function viewTrip(tripId) {
+            const trip = userTrips.find(t => t.id === tripId);
+            if (!trip) return;
+            
+            alert(`Trip Details:\n\nName: ${trip.name}\nDestination: ${trip.destination}\nDuration: ${trip.days} days\nBudget: ₹${Object.values(trip.budget).reduce((a,b) => a+b, 0).toLocaleString()}`);
+        }
+
+        function deleteTrip(tripId) {
+            if (!confirm('Are you sure you want to delete this trip?')) return;
+            
+            userTrips = userTrips.filter(t => t.id !== tripId);
+            localStorage.setItem('userTrips', JSON.stringify(userTrips));
+            displayUserTrips();
+        }
+
+        // Authentication
+        function checkAuth() {
+            const user = localStorage.getItem('travelUser');
+            if (user) {
+                currentUser = JSON.parse(user);
+                updateUIForLoggedInUser();
+            }
+        }
+
+        function updateUIForLoggedInUser() {
+            document.getElementById('userInfo').textContent = `Hello, ${currentUser.name}`;
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('loginBtn').classList.add('hidden');
+            document.getElementById('signupBtn').classList.add('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+        }
+
+        function openAuthModal(mode) {
+            document.getElementById('authModal').classList.add('active');
+            document.getElementById('authTitle').textContent = mode === 'login' ? 'Login' : 'Sign Up';
+            document.getElementById('nameGroup').classList.toggle('hidden', mode === 'login');
+            document.getElementById('toggleAuth').textContent = mode === 'login' ? "Don't have an account? Sign Up" : 'Already have an account? Login';
+            document.getElementById('authModal').dataset.mode = mode;
+        }
+
+        function toggleAuthMode() {
+            const currentMode = document.getElementById('authModal').dataset.mode;
+            openAuthModal(currentMode === 'login' ? 'signup' : 'login');
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+            const mode = document.getElementById('authModal').dataset.mode;
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const name = document.getElementById('nameInput').value;
+
+            try {
+                const endpoint = mode === 'login' ? '/login' : '/register';
+                const response = await fetch(`${API_URL}/users${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentUser = { id: result.user_id, name: name || result.name, email };
+                    localStorage.setItem('travelUser', JSON.stringify(currentUser));
+                    updateUIForLoggedInUser();
+                    closeModal('authModal');
+                    loadUserTrips();
+                } else {
+                    alert(result.message || 'Authentication failed');
+                }
+            } catch (error) {
+                console.error('Auth error:', error);
+                currentUser = { id: Date.now(), name: name || email.split('@')[0], email };
+                localStorage.setItem('travelUser', JSON.stringify(currentUser));
+                updateUIForLoggedInUser();
+                closeModal('authModal');
+                loadUserTrips();
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('travelUser');
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('loginBtn').classList.remove('hidden');
+            document.getElementById('signupBtn').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.add('hidden');
+            showPage('home');
+        }
+
+        // Page Navigation
+        function showPage(page) {
+            document.getElementById('homePage').classList.toggle('hidden', page !== 'home' && page !== 'destinations');
+            document.getElementById('myTripsPage').classList.toggle('hidden', page !== 'my-trips');
+            
+            // Update nav
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            
+            if (page === 'my-trips') {
+                loadUserTrips();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+    </script>
+</body>
+</html>d: 1,
+                    name: 'Goa',
+                    category: 'beach',
+                    rating: 4.8,
+                    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=500',
+                    description: 'Sun, sand, and sea - the perfect beach paradise with vibrant nightlife',
+                    duration: '3-5 days',
+                    bestTime: 'November to February',
+                    avgCost: 15000,
+                    activities: ['Beach Hopping', 'Water Sports', 'Fort Exploration', 'Night Markets', 'Cruise Party'],
+                    popular: true
+                },
+                {
+                    id: 2,
+                    name: 'Manali',
+                    category: 'mountain',
+                    rating: 4.7,
+                    image: 'https://images.unsplash.com/photo-1626621341517-4364f6c739c8?w=500',
+                    description: 'Breathtaking Himalayan views, adventure activities, and serene landscapes',
+                    duration: '4-6 days',
+                    bestTime: 'March to June',
+                    avgCost: 18000,
+                    activities: ['Rohtang Pass', 'Solang Valley', 'Trekking', 'River Rafting', 'Paragliding'],
+                    popular: true
+                },
+                {
+                    i
